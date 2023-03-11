@@ -21,6 +21,11 @@ const Board = () => {
     const response = await axios.get('http://localhost:5000/clipboard');
     setNewEntry(response.data);
   }
+  const handleDelete = (index) => {
+    const newEntries = [...entries];
+    newEntries.splice(index, 1);
+    setEntries(newEntries);
+  };
 
   return (
     <div>
@@ -38,11 +43,11 @@ const Board = () => {
             <button onClick={clipBoardCopy}>Paste from clipboard</button>
             <button onClick={handleAddEntry}>Add Entry</button>
           </div>
-          <ul>
+          <ol>
             {entries.map((entry, index) => (
-              <li key={index}>{entry}</li>
+              <li key={index}>{entry}<button onClick={() => handleDelete()}>Delete</button></li>
             ))}
-          </ul>
+          </ol>
         </div>
       </Draggable>
     </div>
