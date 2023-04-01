@@ -1,44 +1,114 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.draggable{
-  border: 2px solid black;
-  width: 300px;
+.draggable {
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  padding: 10px;
+  width: 700px;
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  max-height: 700px;
   height: 700px;
+  overflow-y: scroll;
+
+  .handle {
+    background-color: #ddd;
+    border: 1px solid #999;
+    color: #333;
+    cursor: move;
+    padding: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .entry-form {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    input[type="text"] {
+      flex-grow: 1;
+      margin-right: 10px;
+      padding: 5px;
+      border: none;
+      border-bottom: 1px solid #ccc;
+      font-size: 16px;
+
+      &:focus {
+        outline: none;
+        border-bottom: 1px solid #666;
+      }
+    }
+
+    button {
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      padding: 10px;
+      font-size: 16px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #3e8e41;
+      }
+
+      &:first-child {
+        background-color: #2196f3;
+        margin-right: 10px;
+
+        &:hover {
+          background-color: #0b7dda;
+        }
+      }
+    }
+  }
+
+  ol {
+    margin-top: 10px;
+    padding-left: 20px;
+    li {
+      display: flex;
+      align-items: center;
+      margin-bottom: 25px;
+      font-size: 1.3rem;
+      position: relative;
+      .entry{
+        max-width: 500px;
+        
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        overflow: hidden;
+        max-height: 4.5em;
+        &.expanded{
+          max-height: none;
+          height: auto;
+          -webkit-line-clamp: unset;
+          overflow: visible;
+        }
+      }
+      
+      .buttons {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        div{
+          padding-top: 10px;
+        }
+        button {
+          background-color: #f44336;
+          color: white;
+          border: none;
+          padding: 5px 10px;
+          font-size: 16px;
+          margin-left: 10px;
+          cursor: pointer;
+
+          &:hover {
+            background-color: #da190b;
+          }
+        }
+      }
+    }
+  }
 }

@@ -14,6 +14,13 @@ const Board = () => {
       setNewEntry("");
     }
   };
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleAddEntry();
+    }
+  };
+
   const handleEntryChange = (event) => {
     setNewEntry(event.target.value);
   };
@@ -55,17 +62,20 @@ const Board = () => {
               placeholder="New entry"
               value={newEntry}
               onChange={handleEntryChange}
+              onKeyDown={handleKeyDown}
             />
             <button onClick={clipBoardPaste}>Paste from clipboard</button>
             <button onClick={handleAddEntry}>Add Entry</button>
           </div>
           <ol>
-            {entries.map((entry, index) => (
-              <li key={index}>
-                {entry}
-                <button onClick={() => handleDelete()}>Delete</button>
-                <button onClick={() => clipBoardCopy(index)}>Copy</button>
-              </li>
+            {entries.map((entry, index, handleDelete, clipBoardCopy) => (
+              <ClipboardEntry
+                key={index}
+                entry={entry}
+                index={index}
+                onDeleteEntry={handleDelete}
+                copyMe={clipBoardCopy}
+              />
             ))}
           </ol>
         </div>
@@ -74,4 +84,30 @@ const Board = () => {
   );
 };
 
+function ClipboardEntry({ entry, index, onDeleteEntry, copyMe }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const entryClasses = isExpanded ? "entry expanded" : "entry";
+  const handleToggleExpanded = () => {
+    setIsExpanded(!isExpanded);
+  };
+
+  return (
+    <li>
+      <div className={entryClasses}>{entry}</div>
+
+      <div className="buttons">
+        {entry.length > 150 && (
+          <button onClick={handleToggleExpanded}>
+            {isExpanded ? "Show less" : "Show more"}
+          </button>
+        )}
+        <div>
+          <button onClick={() => onDeleteEntry(index)}>Delete</button>
+          <button onClick={() => copyMe(index)}>Copy</button>
+        </div>
+      </div>
+    </li>
+  );
+}
 export default Board;
