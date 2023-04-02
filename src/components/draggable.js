@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import Draggable from "react-draggable";
 import axios from "axios";
 const Board = () => {
@@ -68,7 +68,7 @@ const Board = () => {
             <button onClick={handleAddEntry}>Add Entry</button>
           </div>
           <ol>
-            {entries.map((entry, index, handleDelete, clipBoardCopy) => (
+            {entries.map((entry, index) => (
               <ClipboardEntry
                 key={index}
                 entry={entry}
@@ -84,8 +84,29 @@ const Board = () => {
   );
 };
 
+
 function ClipboardEntry({ entry, index, onDeleteEntry, copyMe }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const entryRef = useRef(null);
+  const [isClamped, setIsClamped] = useState(false);
+  
+  const checkEntryClamped = useCallback(() => {
+    const entryElement = entryRef.current;
+    if (entryElement) {
+      entryElement.classList.add("expanded");
+      const fontSize = parseInt(
+        window.getComputedStyle(entryElement).fontSize
+      );
+      const lineHeight = Math.ceil(fontSize);
+      const height = entryElement.clientHeight;
+      setIsClamped(height >= (lineHeight * 5.5));
+      //set that integer to your desired number of lines of text + 1.5
+      entryElement.classList.remove("expanded");
+    }
+  }, []);
+  useEffect(() => {
+    checkEntryClamped();
+  }, [checkEntryClamped]);
 
   const entryClasses = isExpanded ? "entry expanded" : "entry";
   const handleToggleExpanded = () => {
@@ -94,10 +115,9 @@ function ClipboardEntry({ entry, index, onDeleteEntry, copyMe }) {
 
   return (
     <li>
-      <div className={entryClasses}>{entry}</div>
-
+      <div ref={entryRef} className={entryClasses}>{entry}</div>
       <div className="buttons">
-        {entry.length > 150 && (
+        {isClamped && (
           <button onClick={handleToggleExpanded}>
             {isExpanded ? "Show less" : "Show more"}
           </button>
