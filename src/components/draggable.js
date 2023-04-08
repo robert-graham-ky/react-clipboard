@@ -26,23 +26,22 @@ const Board = () => {
   };
 
   const clipBoardPaste = async () => {
-    const response = await axios.get("http://localhost:5000/clipboard");
-    setNewEntry(response.data);
+    try {
+      const text = await navigator.clipboard.readText();
+      setNewEntry(text);
+    } catch (err) {
+      console.error("Failed to read clipboard text: ", err);
+    }
   };
 
   const clipBoardCopy = async (index) => {
-    console.log(entries[index]);
-    const data = { text: entries[index] };
-    axios
-      .post("http://localhost:5000/clipboard", data, {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
+    const text = entries[index];
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log(`Copied "${text}" to clipboard.`);
+    } catch (err) {
+      console.error("Failed to write clipboard text: ", err);
+    }
   };
   const handleDelete = (index) => {
     const newEntries = [...entries];
@@ -84,22 +83,19 @@ const Board = () => {
   );
 };
 
-
 function ClipboardEntry({ entry, index, onDeleteEntry, copyMe }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const entryRef = useRef(null);
   const [isClamped, setIsClamped] = useState(false);
-  
+
   const checkEntryClamped = useCallback(() => {
     const entryElement = entryRef.current;
     if (entryElement) {
       entryElement.classList.add("expanded");
-      const fontSize = parseInt(
-        window.getComputedStyle(entryElement).fontSize
-      );
+      const fontSize = parseInt(window.getComputedStyle(entryElement).fontSize);
       const lineHeight = Math.ceil(fontSize);
       const height = entryElement.clientHeight;
-      setIsClamped(height >= (lineHeight * 5.5));
+      setIsClamped(height >= lineHeight * 5.5);
       //set that integer to your desired number of lines of text + 1.5
       entryElement.classList.remove("expanded");
     }
@@ -115,7 +111,9 @@ function ClipboardEntry({ entry, index, onDeleteEntry, copyMe }) {
 
   return (
     <li>
-      <div ref={entryRef} className={entryClasses}>{entry}</div>
+      <div ref={entryRef} className={entryClasses}>
+        {entry}
+      </div>
       <div className="buttons">
         {isClamped && (
           <button onClick={handleToggleExpanded}>
